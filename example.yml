@@ -25,21 +25,17 @@ externalDocs:
 servers:
   - url: https://petstore3.swagger.io/api/v3
 tags:
-  - name: pet
-    description: Everything about your Pets
-    externalDocs:
-      description: Find out more
-      url: http://swagger.io
-  - name: store
-    description: Access to Petstore orders
-    externalDocs:
-      description: Find out more about our store
-      url: http://swagger.io
-  - name: user
-    description: Operations about user
+  - name: appointments
+    description: CRUD for appointments
+  - name: employees
+    description: Accessing information about employees for services
+  - name: categories
+    description: Access and change product/service categories
+  - name: services
+    description: CRUD for services
 paths:
 
-# Appointment/service related endpoints
+# Appointments
 
   /{business_id}/appointments:
     post:
@@ -256,6 +252,9 @@ paths:
           description: Invalid input data
         404:
           description: Appointment not found
+          
+  # Employees for services
+          
   /{business_id}/employees/available:
     get:
       tags:
@@ -448,7 +447,154 @@ paths:
         404:
           description: Employee not found or no appointments available
 
+  # Category CRUD + access by category
   /{business_id}/categories:
+    post:
+      tags:
+        - categories
+      summary: Create a new category
+      description: Add a new category for the business.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the category
+      responses:
+        201:
+          description: Category created successfully
+        400:
+          description: Invalid input data
+          
+  /{business_id}/categories/{category_id}:
+    get:
+      tags:
+        - categories
+      summary: Get a specific category by ID
+      description: Retrieve details of a specific category by its ID.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+        - name: category_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the category
+      responses:
+        200:
+          description: Category details retrieved successfully
+        400:
+          description: Invalid input
+        404:
+          description: Category not found
+      
+    put:
+      tags:
+        - categories
+      summary: Update an existing category
+      description: Modify the name or details of a category.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+        - name: category_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: New name of the category
+      responses:
+        200:
+          description: Category updated successfully
+        400:
+          description: Invalid input data
+        404:
+          description: Category not found
+
+    delete:
+      tags:
+        - categories
+      summary: Delete a category
+      description: Remove a category by its ID.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+        - name: category_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the category
+      responses:
+        204:
+          description: Category deleted successfully
+        400:
+          description: Invalid input data
+        404:
+          description: Category not found
+
+  /{business_id}/categories/all:
     get:
       tags:
         - categories
@@ -553,6 +699,233 @@ paths:
           description: Invalid input
         404:
           description: No services found for the category
+
+  # TO-DO get all products by category?
+
+  # CRUD for services
+  /{business_id}/services:
+    post:
+      tags:
+        - services
+      summary: Create a new service
+      description: Add a new service for the business.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category_id:
+                  type: integer
+                  description: ID of the category the service belongs to
+                name:
+                  type: string
+                  description: Name of the service
+                description:
+                  type: string
+                  description: Detailed description of the service
+                base_price:
+                  type: number
+                  format: decimal
+                  description: Base price of the service
+                duration_minutes:
+                  type: integer
+                  description: Duration of the service in minutes
+                service_charge:
+                  type: number
+                  format: decimal
+                  description: Additional service charge
+                is_active:
+                  type: boolean
+                  description: Indicates whether the service is currently active
+      responses:
+        201:
+          description: Service created successfully
+        400:
+          description: Invalid input data
+
+  /{business_id}/services/{service_id}:
+    get:
+      tags:
+        - services
+      summary: Get a specific service by ID
+      description: Retrieve details of a specific service by its ID.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+        - name: service_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the service
+      responses:
+        200:
+          description: Service details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  service_id:
+                    type: integer
+                    description: ID of the service
+                  category_id:
+                    type: integer
+                    description: ID of the category
+                  name:
+                    type: string
+                    description: Name of the service
+                  description:
+                    type: string
+                    description: Detailed description of the service
+                  base_price:
+                    type: number
+                    format: decimal
+                    description: Base price of the service
+                  duration_minutes:
+                    type: integer
+                    description: Duration of the service in minutes
+                  service_charge:
+                    type: number
+                    format: decimal
+                    description: Additional service charge
+                  is_active:
+                    type: boolean
+                    description: Indicates if the service is active
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+        400:
+          description: Invalid input
+        404:
+          description: Service not found
+
+    put:
+      tags:
+        - services
+      summary: Update an existing service
+      description: Modify the details of an existing service.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+        - name: service_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category_id:
+                  type: integer
+                  description: ID of the category the service belongs to
+                name:
+                  type: string
+                  description: Name of the service
+                description:
+                  type: string
+                  description: Detailed description of the service
+                base_price:
+                  type: number
+                  format: decimal
+                  description: Base price of the service
+                duration_minutes:
+                  type: integer
+                  description: Duration of the service in minutes
+                service_charge:
+                  type: number
+                  format: decimal
+                  description: Additional service charge
+                is_active:
+                  type: boolean
+                  description: Indicates whether the service is currently active
+      responses:
+        200:
+          description: Service updated successfully
+        400:
+          description: Invalid input data
+        404:
+          description: Service not found
+          
+    delete:
+      tags:
+        - services
+      summary: Delete a service
+      description: Remove a service by its ID.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+        - name: service_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the service
+      responses:
+        204:
+          description: Service deleted successfully (No Content)
+        400:
+          description: Invalid input data
+        404:
+          description: Service not found
+
 
 components:
   schemas:
