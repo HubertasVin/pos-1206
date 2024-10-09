@@ -33,6 +33,10 @@ tags:
     description: Access and change product/service categories
   - name: services
     description: CRUD for services
+  - name: products
+    description: CRUD for products
+  - name: product variations
+    description: CRUD for product variations
 paths:
 
 # Appointments
@@ -926,6 +930,431 @@ paths:
         404:
           description: Service not found
 
+
+  # CRUD for product and product_variation
+  
+  /{business_id}/products:
+    post:
+      tags:
+        - products
+      summary: Create a new product
+      description: Add a new product for the business.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category_id:
+                  type: integer
+                  description: ID of the category the product belongs to
+                name:
+                  type: string
+                  description: Name of the product
+                description:
+                  type: string
+                  description: Detailed description of the product
+                base_price:
+                  type: number
+                  format: decimal
+                  description: Base price of the product
+                product_state:
+                  type: string
+                  enum: ['available', 'unavailable']
+                  description: Availability state of the product
+      responses:
+        201:
+          description: Product created successfully
+        400:
+          description: Invalid input data
+          
+  /{business_id}/products/{product_id}:
+    get:
+      tags:
+        - products
+      summary: Get a specific product by ID
+      description: Retrieve details of a specific product by its ID.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product
+      responses:
+        200:
+          description: Product details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  product_id:
+                    type: integer
+                    description: ID of the product
+                  category_id:
+                    type: integer
+                    description: ID of the category
+                  name:
+                    type: string
+                    description: Name of the product
+                  description:
+                    type: string
+                    description: Detailed description of the product
+                  base_price:
+                    type: number
+                    format: decimal
+                    description: Base price of the product
+                  product_state:
+                    type: string
+                    enum: ['available', 'unavailable']
+                    description: Availability state of the product
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+        400:
+          description: Invalid input
+        404:
+          description: Product not found
+          
+          
+    put:
+      tags:
+        - products
+      summary: Update an existing product
+      description: Modify the details of an existing product.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category_id:
+                  type: integer
+                  description: ID of the category the product belongs to
+                name:
+                  type: string
+                  description: Name of the product
+                description:
+                  type: string
+                  description: Detailed description of the product
+                base_price:
+                  type: number
+                  format: decimal
+                  description: Base price of the product
+                product_state:
+                  type: string
+                  enum: ['available', 'unavailable']
+                  description: Availability state of the product
+      responses:
+        200:
+          description: Product updated successfully
+        400:
+          description: Invalid input data
+        404:
+          description: Product not found
+
+    delete:
+      tags:
+        - products
+      summary: Delete a product
+      description: Remove a product by its ID.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product
+      responses:
+        204:
+          description: Product deleted successfully (No Content)
+        400:
+          description: Invalid input data
+        404:
+          description: Product not found
+
+
+  /{business_id}/products/{product_id}/variations:
+    post:
+      tags:
+        - products
+      summary: Create a new product variation
+      description: Add a new variation to a product.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the variation
+                price_modifier:
+                  type: number
+                  format: decimal
+                  description: Price modifier for the variation
+                product_state:
+                  type: string
+                  enum: ['available', 'unavailable']
+                  description: Availability state of the product variation
+      responses:
+        201:
+          description: Product variation created successfully
+        400:
+          description: Invalid input data
+          
+  /{business_id}/products/{product_id}/variations/{variation_id}:
+    get:
+      tags:
+        - products
+      summary: Get a specific product variation by ID
+      description: Retrieve details of a specific product variation by its ID.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product
+        - name: variation_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product variation
+      responses:
+        200:
+          description: Product variation details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  variation_id:
+                    type: integer
+                    description: ID of the variation
+                  product_id:
+                    type: integer
+                    description: ID of the product
+                  name:
+                    type: string
+                    description: Name of the variation
+                  price_modifier:
+                    type: number
+                    format: decimal
+                    description: Price modifier for the variation
+                  product_state:
+                    type: string
+                    enum: ['available', 'unavailable']
+                    description: Availability state of the variation
+                  created_at:
+                    type: string
+                    format: date-time
+                  updated_at:
+                    type: string
+                    format: date-time
+        400:
+          description: Invalid input
+        404:
+          description: Product variation not found
+
+
+    put:
+      tags:
+        - products
+      summary: Update an existing product variation
+      description: Modify the details of an existing product variation.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product
+        - name: variation_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the variation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the variation
+                price_modifier:
+                  type: number
+                  format: decimal
+                  description: Price modifier for the variation
+                product_state:
+                  type: string
+                  enum: ['available', 'unavailable']
+                  description: Availability state of the variation
+      responses:
+        200:
+          description: Product variation updated successfully
+        400:
+          description: Invalid input data
+        404:
+          description: Product variation not found
+          
+          
+    delete:
+      tags:
+        - products
+      summary: Delete a product variation
+      description: Remove a product variation by its ID.
+      parameters:
+        - name: API-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+          description: Version of the API to use.
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the business
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product
+        - name: variation_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product variation
+      responses:
+        204:
+          description: Product variation deleted successfully (No Content)
+        400:
+          description: Invalid input data
+        404:
+          description: Product variation not found
 
 components:
   schemas:
