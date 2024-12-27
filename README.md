@@ -12,6 +12,16 @@ Before setting up the application, ensure you have the following installed on yo
 - **Maven**
 - **PostgreSQL** (locally or via Docker)
 
+## Running the project (docker required)
+1. Build the jar file
+```
+cd POS && ./mvnw package
+```
+2. Run Docker Compose to start Postgres and SpringBoot application
+```
+docker-compose up --abort-on-container-exit || docker-compose down --volumes --remove-orphans
+```
+
 ## Setting Up the Database Locally
 
 ### 1. Install PostgreSQL

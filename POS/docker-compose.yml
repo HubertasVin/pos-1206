@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  database:
+    image: postgres:15-alpine
+    container_name: pos_db_container
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: datauser
+      POSTGRES_PASSWORD: 6y3wxsnq
+      POSTGRES_DB: pos
+    volumes:
+      - pos_db_data:/var/lib/postgresql/data
+
+  springboot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: springboot_app_container
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/pos
+      SPRING_DATASOURCE_USERNAME: datauser
+      SPRING_DATASOURCE_PASSWORD: 6y3wxsnq
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - database
+    restart: no
+
+volumes:
+  pos_db_data:
